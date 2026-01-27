@@ -1,74 +1,142 @@
-import io.qameta.allure.Step;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import com.models.Courier;
+import com.models.CourierLoginRequest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.notNullValue;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
 
 public class CourierLoginTest {
 
-    private static final String BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1";
+    private static final String BASE_URL = "https://qa-scooter.praktikum-services.ru";
+    private Integer courierId;
+    private String courierLogin;
 
-    @BeforeClass
-    public static void createCourierForTests() {
-        given()
-                .body("{\n" +
-                        "   \"login\": \"testUser\",\n" +
-                        "   \"password\": \"passwd\",\n" +
-                        "   \"firstName\": \"John\"\n" +
-                        "}")
-                .post(BASE_URL + "/courier");
+
+    @Before
+    public void setUp() {
+        RestAssured.baseURI = BASE_URL;
+
+
+        // Генерируем уникальный логин
+        courierLogin = "login_test_" + System.currentTimeMillis();
+        Courier courier = new Courier(courierLogin, "passwd", "Test");
+
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(courier)
+                .post("/api/v1/courier");
+
+
+        // Ожидаем 201 Created и {"ok": true}
+        response.then()
+                .assertThat()
+                .statusCode(201)
+                .body("ok", is(true));
+
+        System.out.println("[SETUP] Create courier response: " + response.body().asString());
     }
 
-    @AfterClass
-    public static void deleteCreatedCourier() {
-        given()
-                .when().delete(BASE_URL + "/courier/{id}", 1);
+    @After
+    public void tearDown() {
+        if (courierId != null) {
+            Response response = given()
+                    .delete("/api/v1/courier/" + courierId);
+
+            // Логируем ответ на удаление
+            System.out.println("[TEARDOWN] Delete courier response: " + response.body().asString());
+
+
+            response.then()
+                    .assertThat()
+                    .statusCode(200);
+        }
     }
 
-    @Step("Авторизация курьера")
     @Test
     public void testSuccessfulLogin() {
-        given()
-                .body("{\n" +
-                        "   \"login\": \"testUser\",\n" +
-                        "   \"password\": \"passwd\"\n" +
-                        "}")
-                .post(BASE_URL + "/courier/login")
-                .then()
+        CourierLoginRequest request = new CourierLoginRequest(courierLogin, "passwd");
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .post("/api/v1/courier/login");
+
+
+        // Ожидаем: HTTP 200 OK, тело {"id": 12345}
+        response.then()
                 .assertThat()
                 .statusCode(200)
-                .body("id", notNullValue());
+                .body("id", instanceOf(Integer.class));  // id — число
+
+
+        // Сохраняем id для tearDown
+        courierId = response.jsonPath().getInt("id");
+        System.out.println("[TEST] Successful login response (got ID): " + response.body().asString());
     }
 
-    @Step("Неверные данные для авторизации")
     @Test
     public void testInvalidCredentials() {
-        given()
-                .body("{\n" +
-                        "   \"login\": \"wrongUser\",\n" +
-                        "   \"password\": \"invalidPass\"\n" +
-                        "}")
-                .post(BASE_URL + "/courier/login")
-                .then()
+        CourierLoginRequest invalidRequest = new CourierLoginRequest("wrongUser", "invalidPass");
+
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(invalidRequest)
+                .post("/api/v1/courier/login");
+
+
+        // Ожидаем: HTTP 404 Not Found, тело {"message": "Учетная запись не найдена"}
+        response.then()
                 .assertThat()
                 .statusCode(404)
                 .body("message", containsString("Учетная запись не найдена"));
+
+
+        System.out.println("[TEST] Invalid credentials response: " + response.body().asString());
     }
 
-    @Step("Отсутствие необходимых полей")
     @Test
-    public void testMissingFieldInRequest() {
-        given()
-                .body("{\n" +
-                        "   \"login\": \"testUser\"\n" +
-                        "}")
-                .post(BASE_URL + "/courier/login")
-                .then()
+    public void testMissingLoginOrPassword() {
+        // Случай 1: нет login
+        CourierLoginRequest noLogin = new CourierLoginRequest();
+        noLogin.setPassword("passwd");
+
+
+        Response response1 = given()
+                .contentType(ContentType.JSON)
+                .body(noLogin)
+                .post("/api/v1/courier/login");
+
+
+        response1.then()
                 .assertThat()
                 .statusCode(400)
                 .body("message", containsString("Недостаточно данных для входа"));
+
+
+        System.out.println("[TEST] Missing login response: " + response1.body().asString());
+
+
+        // Случай 2: нет password
+        CourierLoginRequest noPassword = new CourierLoginRequest();
+        noPassword.setLogin("testUser");
+
+
+        Response response2 = given()
+                .contentType(ContentType.JSON)
+                .body(noPassword)
+                .post("/api/v1/courier/login");
+        response2.then()
+                .assertThat()
+                .statusCode(400)
+                .body("message", containsString("Недостаточно данных для входа"));
+        System.out.println("[TEST] Missing password response: " + response2.body().asString());
     }
 }
