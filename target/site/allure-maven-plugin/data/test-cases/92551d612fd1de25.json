@@ -1,0 +1,85 @@
+{
+  "uid" : "92551d612fd1de25",
+  "name" : "testOrderCreationWithBothColors",
+  "fullName" : "OrderCreationTest.testOrderCreationWithBothColors",
+  "historyId" : "6196b6f77024691b2c282e285bdc41bd",
+  "time" : {
+    "start" : 1769508800164,
+    "stop" : 1769508800531,
+    "duration" : 367
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "newBroken" : false,
+  "newPassed" : false,
+  "retriesCount" : 0,
+  "retriesStatusChange" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "Создание заказа с двумя цветами",
+      "time" : {
+        "start" : 1769508800164,
+        "stop" : 1769508800531,
+        "duration" : 367
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    } ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 1,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "package",
+    "value" : ""
+  }, {
+    "name" : "testClass",
+    "value" : "OrderCreationTest"
+  }, {
+    "name" : "testMethod",
+    "value" : "testOrderCreationWithBothColors"
+  }, {
+    "name" : "suite",
+    "value" : "OrderCreationTest"
+  }, {
+    "name" : "host",
+    "value" : "MacBook-Air-Anastasia.local"
+  }, {
+    "name" : "thread",
+    "value" : "20261@MacBook-Air-Anastasia.local.main(1)"
+  }, {
+    "name" : "framework",
+    "value" : "junit4"
+  }, {
+    "name" : "language",
+    "value" : "java"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "92551d612fd1de25.json",
+  "parameterValues" : [ ]
+}

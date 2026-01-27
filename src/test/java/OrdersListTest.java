@@ -15,6 +15,6 @@ public class OrdersListTest {
                 .then()
                 .assertThat()
                 .statusCode(200)
-                .body("size()", greaterThanOrEqualTo(0)); // проверка наличия хотя бы одного элемента
+                .body("size()", greaterThanOrEqualTo(0));
     }
 }

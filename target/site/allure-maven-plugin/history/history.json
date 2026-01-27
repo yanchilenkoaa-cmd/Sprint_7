@@ -1,0 +1,194 @@
+{
+  "6196b6f77024691b2c282e285bdc41bd" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "92551d612fd1de25",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508800164,
+        "stop" : 1769508800531,
+        "duration" : 367
+      }
+    } ]
+  },
+  "38fe90abfa562b82d996aa0f1dc7180a" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "d01ee8d4b461c51c",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508789825,
+        "stop" : 1769508800139,
+        "duration" : 10314
+      }
+    } ]
+  },
+  "51ebea9ee584348b0535d914b20153c7" : {
+    "statistic" : {
+      "failed" : 1,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "8d7bb358e1dd450c",
+      "status" : "failed",
+      "statusDetails" : "1 expectation failed.\nExpected status code <400> but was <504>.\n",
+      "time" : {
+        "start" : 1769508726902,
+        "stop" : 1769508787810,
+        "duration" : 60908
+      }
+    } ]
+  },
+  "f10929bb155df1e0094f19c15717fce4" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "f94d831bbd667d05",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508800536,
+        "stop" : 1769508800780,
+        "duration" : 244
+      }
+    } ]
+  },
+  "db99425afd53428dd903552d021c25cb" : {
+    "statistic" : {
+      "failed" : 1,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "1101e7c2366a5c68",
+      "status" : "failed",
+      "statusDetails" : "1 expectation failed.\nJSON path message doesn't match.\nExpected: (a string containing \"Недостаточно данных\" or a string containing \"Этот логин уже используется\")\n  Actual: null\n",
+      "time" : {
+        "start" : 1769508788337,
+        "stop" : 1769508789044,
+        "duration" : 707
+      }
+    } ]
+  },
+  "333734e8c4057f71844c32f429b7f058" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "2f79e9ce5d239fb3",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508789050,
+        "stop" : 1769508789361,
+        "duration" : 311
+      }
+    } ]
+  },
+  "799e4978caf6c46de4c03b0c36a3e6cf" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "c31927756646eccd",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508789365,
+        "stop" : 1769508789817,
+        "duration" : 452
+      }
+    } ]
+  },
+  "bbb3c5353cb1c2664b71087d0e732462" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "9a8d86d14cd03bab",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508787836,
+        "stop" : 1769508788316,
+        "duration" : 480
+      }
+    } ]
+  },
+  "37d08a37b63e55dcb4c6c080635572ad" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "216b343ef17832f2",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508719103,
+        "stop" : 1769508726770,
+        "duration" : 7667
+      }
+    } ]
+  },
+  "8b50fdad17b2ddfd6856228dd7966ed6" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "a3846c2a36965ab2",
+      "status" : "passed",
+      "time" : {
+        "start" : 1769508800788,
+        "stop" : 1769508801056,
+        "duration" : 268
+      }
+    } ]
+  }
+}

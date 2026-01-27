@@ -1,0 +1,51 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "name" : "categories",
+  "children" : [ {
+    "name" : "Product defects",
+    "children" : [ {
+      "name" : "1 expectation failed.\nExpected status code <400> but was <504>.\n",
+      "children" : [ {
+        "name" : "testMissingLoginOrPassword",
+        "uid" : "8d7bb358e1dd450c",
+        "parentUid" : "1d8f1f7a133e17931abd80cead18da26",
+        "status" : "failed",
+        "time" : {
+          "start" : 1769508726902,
+          "stop" : 1769508787810,
+          "duration" : 60908
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "newPassed" : false,
+        "newBroken" : false,
+        "retriesCount" : 0,
+        "retriesStatusChange" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "1d8f1f7a133e17931abd80cead18da26"
+    }, {
+      "name" : "1 expectation failed.\nJSON path message doesn't match.\nExpected: (a string containing \"Недостаточно данных\" or a string containing \"Этот логин уже используется\")\n  Actual: null\n",
+      "children" : [ {
+        "name" : "testMissingRequiredFields",
+        "uid" : "1101e7c2366a5c68",
+        "parentUid" : "0e9d7904ba76ecbb351f38eb5601c422",
+        "status" : "failed",
+        "time" : {
+          "start" : 1769508788337,
+          "stop" : 1769508789044,
+          "duration" : 707
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "newPassed" : false,
+        "newBroken" : false,
+        "retriesCount" : 0,
+        "retriesStatusChange" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "0e9d7904ba76ecbb351f38eb5601c422"
+    } ],
+    "uid" : "8fb3a91ba5aaf9de24cc8a92edc82b5d"
+  } ]
+}
