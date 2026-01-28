@@ -1,5 +1,5 @@
 import com.models.Courier;
-import com.models.CourierApiClient;
+import com.api.model.CourierApiClient;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
@@ -78,11 +78,8 @@ public class CourierCreateTest {
 
         response.then()
                 .assertThat()
-                .statusCode(anyOf(is(SC_BAD_REQUEST), is(SC_CREATED)))
-                .body("message", anyOf(
-                        containsString("Недостаточно данных"),
-                        containsString("Этот логин уже используется")
-                ));
+                .statusCode(SC_BAD_REQUEST)
+                .body("message", containsString("Недостаточно данных"));
     }
 
     @Test
@@ -94,11 +91,8 @@ public class CourierCreateTest {
 
         response.then()
                 .assertThat()
-                .statusCode(anyOf(is(SC_BAD_REQUEST), is(SC_CREATED)))
-                .body("message", anyOf(
-                        containsString("Недостаточно данных"),
-                        containsString("Этот логин уже используется")
-                ));
+                .statusCode(SC_BAD_REQUEST)
+                .body("message", containsString("Недостаточно данных"));
     }
 
     @Test
@@ -110,11 +104,8 @@ public class CourierCreateTest {
 
         response.then()
                 .assertThat()
-                .statusCode(anyOf(is(SC_BAD_REQUEST), is(SC_CREATED)))
-                .body("message", anyOf(
-                        containsString("Недостаточно данных"),
-                        containsString("Этот логин уже используется")
-                ));
+                .statusCode(SC_BAD_REQUEST)
+                        .body("message", containsString("Недостаточно данных"));
     }
     private String generateUniqueLogin(String prefix) {
         return prefix + System.currentTimeMillis();
