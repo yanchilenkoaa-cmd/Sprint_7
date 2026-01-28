@@ -2,6 +2,9 @@ import com.models.OrderRequest;
 import com.models.OrderRequestWithoutColor;
 import io.qameta.allure.Step;
 import org.junit.Test;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
+
 
 import java.util.Arrays;
 
@@ -14,6 +17,8 @@ public class OrderCreationTest {
 
 
     @Step("Создание нового заказа")
+    @DisplayName("Создание заказа с цветом BLACK")
+    @Description("Проверяем, что заказ успешно создаётся, если указан цвет BLACK. Ожидается статус 201 и наличие поля track в ответе.")
     @Test
     public void testOrderCreationWithBlackColor() {
         OrderRequest order = new OrderRequest(
@@ -31,6 +36,8 @@ public class OrderCreationTest {
     }
 
     @Step("Создание заказа с двумя цветами")
+    @DisplayName("Создание заказа с цветами BLACK и GREY")
+    @Description("Проверяем, что заказ успешно создаётся при указании двух цветов (BLACK и GREY). Ожидается статус 201 и наличие поля track в ответе.")
     @Test
     public void testOrderCreationWithBothColors() {
         OrderRequest order = new OrderRequest(
@@ -48,6 +55,8 @@ public class OrderCreationTest {
     }
 
     @Step("Создание заказа без указания цвета")
+    @DisplayName("Создание заказа без указания цвета")
+    @Description("Проверяем, что заказ успешно создаётся, если цвет не указан. Ожидается статус 201 и наличие поля track в ответе.")
     @Test
     public void testOrderCreationWithoutColor() {
         OrderRequestWithoutColor order = new OrderRequestWithoutColor(

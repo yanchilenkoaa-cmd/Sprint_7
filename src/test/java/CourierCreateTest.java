@@ -1,137 +1,122 @@
 import com.models.Courier;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import com.models.CourierApiClient;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static io.restassured.RestAssured.*;
+import static com.models.CourierTestData.*;
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.*;
 
 public class CourierCreateTest {
 
-    private static final String BASE_URL = "https://qa-scooter.praktikum-services.ru";
+    private static CourierApiClient apiClient;
     private Integer createdCourierId;
 
     @BeforeClass
     public static void setup() {
-        RestAssured.baseURI = BASE_URL;
+        apiClient = new CourierApiClient();
     }
 
     @After
     public void tearDown() {
         if (createdCourierId != null) {
-            given()
-                    .delete("/api/v1/courier/" + createdCourierId)
-                    .then()
-                    .assertThat()
-                    .statusCode(200);
+            Response response = apiClient.deleteCourier(createdCourierId);
+            response.then().assertThat().statusCode(SC_OK);
         }
     }
 
-    // 1. Курьера можно создать
     @Test
+    @DisplayName("Создание курьера: успешный сценарий")
+    @Description("Проверяем, что курьер создаётся с корректными данными и возвращается статус 201")
     public void testCreateCourierSuccess() {
-        String uniqueLogin = "create_test_" + System.currentTimeMillis();
-        Courier courier = new Courier(uniqueLogin, "1234", "saske");
+        String uniqueLogin = generateUniqueLogin(LOGIN_PREFIX_CREATE);
+        Courier courier = new Courier(uniqueLogin, DEFAULT_PASSWORD, DEFAULT_FIRST_NAME);
 
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .body(courier)
-                .post("/api/v1/courier");
+        Response response = apiClient.createCourier(courier);
 
         response.then()
                 .assertThat()
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("ok", is(true));
 
-        // Извлекаем id только если статус 201 И поле "id" присутствует
-        if (response.statusCode() == 201 && response.jsonPath().getString("id") != null) {
+        if (response.statusCode() == SC_CREATED && response.jsonPath().getString("id") != null) {
             createdCourierId = response.jsonPath().getInt("id");
         }
     }
 
-    // 2. Нельзя создать двух одинаковых курьеров (по логину)
     @Test
+    @DisplayName("Создание дублирующего курьера")
+    @Description("Проверяем, что нельзя создать курьера с уже существующим логином (статус 409)")
     public void testCreateDuplicateCourier() {
-        String login = "dup_test_" + System.currentTimeMillis();
-        Courier courier = new Courier(login, "1234", "test");
+        String login = generateUniqueLogin(LOGIN_PREFIX_DUPLICATE);
+        Courier courier = new Courier(login, DEFAULT_PASSWORD, "test");
 
-        // Создаём первого курьера
-        Response firstResponse = given()
-                .contentType(ContentType.JSON)
-                .body(courier)
-                .post("/api/v1/courier");
+        Response firstResponse = apiClient.createCourier(courier);
+        firstResponse.then().assertThat().statusCode(SC_CREATED);
 
-        firstResponse.then()
-                .assertThat()
-                .statusCode(201);
-
-        // Сохраняем id только при успешном создании и наличии поля "id"
-        if (firstResponse.statusCode() == 201 && firstResponse.jsonPath().getString("id") != null) {
+        if (firstResponse.statusCode() == SC_CREATED && firstResponse.jsonPath().getString("id") != null) {
             createdCourierId = firstResponse.jsonPath().getInt("id");
         }
 
-        // Попытка создать второго с тем же логином
-        given()
-                .contentType(ContentType.JSON)
-                .body(courier)
-                .post("/api/v1/courier")
-                .then()
+        Response secondResponse = apiClient.createCourier(courier);
+        secondResponse.then()
                 .assertThat()
-                .statusCode(409)
+                .statusCode(SC_CONFLICT)
                 .body("message", containsString("Этот логин уже используется"));
     }
 
-    // 3, 5. Обязательные поля: проверка отсутствия полей
     @Test
-    public void testMissingRequiredFields() {
-        // Пропущен login
-        Courier missingLogin = new Courier(null, "1234", "saske");
-        Response loginResponse = given()
-                .contentType(ContentType.JSON)
-                .body(missingLogin)
-                .post("/api/v1/courier");
+    @DisplayName("Создание курьера без поля login")
+    @Description("Проверяем ответ при отсутствии поля login (ожидаем 400 или 201 с сообщением об ошибке)")
+    public void testMissingLogin() {
+        Courier missingLogin = new Courier(null, DEFAULT_PASSWORD, DEFAULT_FIRST_NAME);
+        Response response = apiClient.createCourier(missingLogin);
 
-
-        loginResponse.then()
+        response.then()
                 .assertThat()
-                .statusCode(anyOf(is(400), is(201))) // API может возвращать 201 даже без login
+                .statusCode(anyOf(is(SC_BAD_REQUEST), is(SC_CREATED)))
                 .body("message", anyOf(
                         containsString("Недостаточно данных"),
                         containsString("Этот логин уже используется")
                 ));
+    }
 
-        // Пропущен password
-        Courier missingPassword = new Courier("ninja_" + System.currentTimeMillis(), null, "saske");
-        Response passwordResponse = given()
-                .contentType(ContentType.JSON)
-                .body(missingPassword)
-                .post("/api/v1/courier");
+    @Test
+    @DisplayName("Создание курьера без поля password")
+    @Description("Проверяем ответ при отсутствии поля password (ожидаем 400 или 201 с сообщением об ошибке)")
+    public void testMissingPassword() {
+        Courier missingPassword = new Courier(generateUniqueLogin(LOGIN_PREFIX_MISSING), null, DEFAULT_FIRST_NAME);
+        Response response = apiClient.createCourier(missingPassword);
 
-
-        passwordResponse.then()
+        response.then()
                 .assertThat()
-                .statusCode(anyOf(is(400), is(201)))
+                .statusCode(anyOf(is(SC_BAD_REQUEST), is(SC_CREATED)))
                 .body("message", anyOf(
                         containsString("Недостаточно данных"),
                         containsString("Этот логин уже используется")
                 ));
+    }
 
-        // Пропущен firstName
-        Courier missingFirstName = new Courier("ninja2_" + System.currentTimeMillis(), "1234", null);
-        Response nameResponse = given()
-                .contentType(ContentType.JSON)
-                .body(missingFirstName)
-                .post("/api/v1/courier");
+    @Test
+    @DisplayName("Создание курьера без поля firstName")
+    @Description("Проверяем ответ при отсутствии поля firstName (ожидаем 400 или 201 с сообщением об ошибке)")
+    public void testMissingFirstName() {
+        Courier missingFirstName = new Courier(generateUniqueLogin(LOGIN_PREFIX_MISSING), DEFAULT_PASSWORD, null);
+        Response response = apiClient.createCourier(missingFirstName);
 
-        nameResponse.then()
+        response.then()
                 .assertThat()
-                .statusCode(anyOf(is(400), is(201)))
+                .statusCode(anyOf(is(SC_BAD_REQUEST), is(SC_CREATED)))
                 .body("message", anyOf(
                         containsString("Недостаточно данных"),
                         containsString("Этот логин уже используется")
                 ));
+    }
+    private String generateUniqueLogin(String prefix) {
+        return prefix + System.currentTimeMillis();
     }
 }
