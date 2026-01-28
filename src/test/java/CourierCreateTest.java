@@ -15,6 +15,7 @@ public class CourierCreateTest {
 
     private static CourierApiClient apiClient;
     private Integer createdCourierId;
+    private Response lastCreateResponse;
 
     @BeforeClass
     public static void setup() {
@@ -23,12 +24,27 @@ public class CourierCreateTest {
 
     @After
     public void tearDown() {
+        // 1. Извлекаем id, если был успешный create
+        if (lastCreateResponse != null &&
+                lastCreateResponse.statusCode() == SC_CREATED &&
+                lastCreateResponse.jsonPath().getString("id") != null) {
+
+            createdCourierId = lastCreateResponse.jsonPath().getInt("id");
+            System.out.println("Extracted courier ID for cleanup: " + createdCourierId);
+        }
+
+        // 2. Удаляем курьера, если id извлечён
         if (createdCourierId != null) {
             Response response = apiClient.deleteCourier(createdCourierId);
-            response.then().assertThat().statusCode(SC_OK);
+            response.then()
+                    .assertThat()
+                    .statusCode(SC_OK);
+            System.out.println("Courier with ID " + createdCourierId + " successfully deleted.");
         }
-    }
 
+        // 3. Очищаем lastCreateResponse для следующего теста
+        lastCreateResponse = null;
+    }
     @Test
     @DisplayName("Создание курьера: успешный сценарий")
     @Description("Проверяем, что курьер создаётся с корректными данными и возвращается статус 201")
@@ -37,7 +53,7 @@ public class CourierCreateTest {
         Courier courier = new Courier(uniqueLogin, DEFAULT_PASSWORD, DEFAULT_FIRST_NAME);
 
         Response response = apiClient.createCourier(courier);
-
+        lastCreateResponse = response; // Сохраняем ответ для @After
         response.then()
                 .assertThat()
                 .statusCode(SC_CREATED)
@@ -56,11 +72,9 @@ public class CourierCreateTest {
         Courier courier = new Courier(login, DEFAULT_PASSWORD, "test");
 
         Response firstResponse = apiClient.createCourier(courier);
-        firstResponse.then().assertThat().statusCode(SC_CREATED);
+        lastCreateResponse = firstResponse; // Сохраняем для @After
 
-        if (firstResponse.statusCode() == SC_CREATED && firstResponse.jsonPath().getString("id") != null) {
-            createdCourierId = firstResponse.jsonPath().getInt("id");
-        }
+        firstResponse.then().assertThat().statusCode(SC_CREATED);
 
         Response secondResponse = apiClient.createCourier(courier);
         secondResponse.then()
@@ -75,6 +89,7 @@ public class CourierCreateTest {
     public void testMissingLogin() {
         Courier missingLogin = new Courier(null, DEFAULT_PASSWORD, DEFAULT_FIRST_NAME);
         Response response = apiClient.createCourier(missingLogin);
+        lastCreateResponse = response; // Сохраняем (хотя тут не понадобится)
 
         response.then()
                 .assertThat()
@@ -88,6 +103,7 @@ public class CourierCreateTest {
     public void testMissingPassword() {
         Courier missingPassword = new Courier(generateUniqueLogin(LOGIN_PREFIX_MISSING), null, DEFAULT_FIRST_NAME);
         Response response = apiClient.createCourier(missingPassword);
+        lastCreateResponse = response; // Сохраняем
 
         response.then()
                 .assertThat()
@@ -101,7 +117,7 @@ public class CourierCreateTest {
     public void testMissingFirstName() {
         Courier missingFirstName = new Courier(generateUniqueLogin(LOGIN_PREFIX_MISSING), DEFAULT_PASSWORD, null);
         Response response = apiClient.createCourier(missingFirstName);
-
+        lastCreateResponse = response; // Сохраняем
         response.then()
                 .assertThat()
                 .statusCode(SC_BAD_REQUEST)
